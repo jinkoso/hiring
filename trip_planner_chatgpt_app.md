@@ -126,7 +126,7 @@ Use as much AI as you want.
 
 Include an `AI_USAGE.md` describing:
 
-* Which AI tools you used (ChatGPT, Copilot, Cursor, etc.)
+* Which AI tools you used (Claude Code, OpenCode, Codex, Copilot, Cursor, etc.)
 * Roughly what you used them for (schema design, boilerplate, map integration, debugging)
 * Any key prompts that shaped the solution (short summary is fine)
 
