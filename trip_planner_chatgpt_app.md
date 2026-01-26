@@ -4,9 +4,9 @@
 
 Build a **ChatGPT App** (MCP server + UI widget) that provides a **Trip Planning tool**. ChatGPT should be able to invoke your tool to answer prompts like:
 
-1. “Help me plan a trip from New York to Europe”
-2. “Help me plan a 7 days trip with a budget under 1000 dollars”
-3. “Where can I go for a 7 days trip this summer for surfing from Paris.”
+1. “I am traveling to Japan for 10 days and it will be my first time there. Can you build me a detailed itinerary that balances nature and cultural visit? I would love something that feels realistic and not rushed.”
+2. “I am planning a 7 day trip to Italy with my partner and we want a mix of culture food and relaxation. Can you create an itinerary that covers Rome Florence and the Amalfi Coast with travel time included?”
+3. “I am going to the US West Coast for 12 days on a solo trip. Can you build me an itinerary that includes major highlights local spots and some hidden gems while keeping things flexible?”
 
 Your app must return **structured data** and render an **interactive UI** in ChatGPT with a **map showing destination points**. (Map can be Mapbox, MapLibre, Leaflet, or similar.)
 
