@@ -1,0 +1,818 @@
+{
+  "format_version": 1,
+  "description": "Public, synthetic examples for the trip request parser assignment.",
+  "counts": {
+    "core": 28,
+    "extended": 12,
+    "total": 40
+  },
+  "cases": [
+    {
+      "id": "c001",
+      "tier": "core",
+      "category": "fully_specified_iso",
+      "input": {
+        "text": "Two passengers from New York to Paris on 2027-05-10, up to USD 1200 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "New York",
+        "destination": "Paris",
+        "departure_date": "2027-05-10",
+        "passengers": 2,
+        "budget_per_person": {"amount": 1200, "currency": "USD"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "All required fields and an explicit per-person USD budget are present."
+    },
+    {
+      "id": "c002",
+      "tier": "core",
+      "category": "fully_specified_written_date",
+      "input": {
+        "text": "Please arrange London to Tokyo for three people on March 18, 2027. Budget: GBP 950 per person.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "London",
+        "destination": "Tokyo",
+        "departure_date": "2027-03-18",
+        "passengers": 3,
+        "budget_per_person": {"amount": 950, "currency": "GBP"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "The written date includes a year and the budget basis is explicit."
+    },
+    {
+      "id": "c003",
+      "tier": "core",
+      "category": "solo_and_eur",
+      "input": {
+        "text": "Solo trip from Berlin to Rome, departing 2027-01-15, EUR 400 per person.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Berlin",
+        "destination": "Rome",
+        "departure_date": "2027-01-15",
+        "passengers": 1,
+        "budget_per_person": {"amount": 400, "currency": "EUR"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "Solo maps to one passenger."
+    },
+    {
+      "id": "c004",
+      "tier": "core",
+      "category": "optional_budget_absent",
+      "input": {
+        "text": "Four travelers need to go from Denver to Vancouver on 2027-07-04.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Denver",
+        "destination": "Vancouver",
+        "departure_date": "2027-07-04",
+        "passengers": 4,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "An entirely absent budget is optional and does not block readiness."
+    },
+    {
+      "id": "c005",
+      "tier": "core",
+      "category": "relative_tomorrow",
+      "input": {
+        "text": "Tomorrow, send two of us from Austin to Chicago. USD 300 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Austin",
+        "destination": "Chicago",
+        "departure_date": "2026-11-03",
+        "passengers": 2,
+        "budget_per_person": {"amount": 300, "currency": "USD"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 1,
+      "reason": "Tomorrow is resolved only from the supplied reference date."
+    },
+    {
+      "id": "c006",
+      "tier": "core",
+      "category": "relative_in_days",
+      "input": {
+        "text": "I need a flight from Oslo to Madrid in 10 days for five passengers.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Oslo",
+        "destination": "Madrid",
+        "departure_date": "2026-11-12",
+        "passengers": 5,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 10,
+      "reason": "A non-negative integer day offset is supported."
+    },
+    {
+      "id": "c007",
+      "tier": "core",
+      "category": "relative_today",
+      "input": {
+        "text": "One passenger from Lima to Quito today.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Lima",
+        "destination": "Quito",
+        "departure_date": "2026-11-02",
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 0,
+      "reason": "Same-day travel is allowed."
+    },
+    {
+      "id": "c008",
+      "tier": "core",
+      "category": "missing_origin",
+      "input": {
+        "text": "I want to travel to Bangkok on 2027-02-20 with 2 passengers.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": null,
+        "destination": "Bangkok",
+        "departure_date": "2027-02-20",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Where will you depart from?"]
+      },
+      "clarification_fields": ["origin"],
+      "reason": "Origin is required and is not inferable."
+    },
+    {
+      "id": "c009",
+      "tier": "core",
+      "category": "missing_destination",
+      "input": {
+        "text": "Leaving from Nairobi on 2027-08-09 for three travelers.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Nairobi",
+        "destination": null,
+        "departure_date": "2027-08-09",
+        "passengers": 3,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Where would you like to travel to?"]
+      },
+      "clarification_fields": ["destination"],
+      "reason": "Destination is required and is not present."
+    },
+    {
+      "id": "c010",
+      "tier": "core",
+      "category": "missing_departure_date",
+      "input": {
+        "text": "Six people traveling from Dublin to Prague.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Dublin",
+        "destination": "Prague",
+        "departure_date": null,
+        "passengers": 6,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["What date would you like to depart?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "Departure date is required."
+    },
+    {
+      "id": "c011",
+      "tier": "core",
+      "category": "missing_passengers",
+      "input": {
+        "text": "Travel from Boston to Montreal on 2027-04-06.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Boston",
+        "destination": "Montreal",
+        "departure_date": "2027-04-06",
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["How many passengers are traveling?"]
+      },
+      "clarification_fields": ["passengers"],
+      "reason": "One passenger must not be inferred from silence."
+    },
+    {
+      "id": "c012",
+      "tier": "core",
+      "category": "multiple_missing_fields",
+      "input": {
+        "text": "I need to fly to Seoul on 2027-06-30.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": null,
+        "destination": "Seoul",
+        "departure_date": "2027-06-30",
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Where will you depart from?", "How many passengers are traveling?"]
+      },
+      "clarification_fields": ["origin", "passengers"],
+      "reason": "Known destination and date are retained while two missing fields are requested."
+    },
+    {
+      "id": "c013",
+      "tier": "core",
+      "category": "all_required_missing",
+      "input": {
+        "text": "Help me plan a flight, please.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": null,
+        "destination": null,
+        "departure_date": null,
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Where will you depart from?", "Where would you like to travel to?", "What date would you like to depart?", "How many passengers are traveling?"]
+      },
+      "clarification_fields": ["origin", "destination", "departure_date", "passengers"],
+      "reason": "Every required business field is absent."
+    },
+    {
+      "id": "c014",
+      "tier": "core",
+      "category": "budget_missing_currency",
+      "input": {
+        "text": "Madrid to Athens on 2027-09-12 for 2 people, 500 per person.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Madrid",
+        "destination": "Athens",
+        "departure_date": "2027-09-12",
+        "passengers": 2,
+        "budget_per_person": {"amount": 500, "currency": null},
+        "clarification_questions": ["Which currency applies to the 500 per-person budget?"]
+      },
+      "clarification_fields": ["budget_per_person.currency"],
+      "reason": "The positive amount and per-person basis are known but currency is absent."
+    },
+    {
+      "id": "c015",
+      "tier": "core",
+      "category": "budget_bare_dollar",
+      "input": {
+        "text": "Two passengers from Toronto to Miami on 2027-01-20, $650 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Toronto",
+        "destination": "Miami",
+        "departure_date": "2027-01-20",
+        "passengers": 2,
+        "budget_per_person": {"amount": 650, "currency": null},
+        "clarification_questions": ["Which currency does the $650 per-person budget use?"]
+      },
+      "clarification_fields": ["budget_per_person.currency"],
+      "reason": "A bare dollar sign does not determine a currency."
+    },
+    {
+      "id": "c016",
+      "tier": "core",
+      "category": "budget_ambiguous_basis",
+      "input": {
+        "text": "Rome to Cairo for 2 travelers on 2027-03-11 with a budget of EUR 800.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Rome",
+        "destination": "Cairo",
+        "departure_date": "2027-03-11",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": "EUR"},
+        "clarification_questions": ["Is the EUR 800 budget per person?"]
+      },
+      "clarification_fields": ["budget_basis"],
+      "reason": "Currency is known, but an unqualified budget cannot be stored as per-person amount."
+    },
+    {
+      "id": "c017",
+      "tier": "core",
+      "category": "invalid_zero_passengers",
+      "input": {
+        "text": "Zero passengers from Phoenix to Dallas on 2027-02-02.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Phoenix",
+        "destination": "Dallas",
+        "departure_date": "2027-02-02",
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Please provide a positive passenger count."]
+      },
+      "clarification_fields": ["passengers"],
+      "reason": "Passenger count must be positive."
+    },
+    {
+      "id": "c018",
+      "tier": "core",
+      "category": "invalid_negative_passengers",
+      "input": {
+        "text": "Book -2 people from Tunis to Malta on 2027-05-05.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Tunis",
+        "destination": "Malta",
+        "departure_date": "2027-05-05",
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Please provide a positive passenger count."]
+      },
+      "clarification_fields": ["passengers"],
+      "reason": "A negative count is invalid rather than missing-by-default."
+    },
+    {
+      "id": "c019",
+      "tier": "core",
+      "category": "invalid_zero_budget",
+      "input": {
+        "text": "One person from Warsaw to Vienna on 2027-02-14, EUR 0 per person.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Warsaw",
+        "destination": "Vienna",
+        "departure_date": "2027-02-14",
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": "EUR"},
+        "clarification_questions": ["What positive EUR amount is available per person?"]
+      },
+      "clarification_fields": ["budget_per_person.amount"],
+      "reason": "Zero is not a positive budget amount; explicit currency remains known."
+    },
+    {
+      "id": "c020",
+      "tier": "core",
+      "category": "invalid_negative_budget",
+      "input": {
+        "text": "Glasgow to Reykjavik on 2027-04-22 for two, GBP -50 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Glasgow",
+        "destination": "Reykjavik",
+        "departure_date": "2027-04-22",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": "GBP"},
+        "clarification_questions": ["What positive GBP amount is available per person?"]
+      },
+      "clarification_fields": ["budget_per_person.amount"],
+      "reason": "A negative amount is invalid; explicit currency is preserved."
+    },
+    {
+      "id": "c021",
+      "tier": "core",
+      "category": "invalid_past_date",
+      "input": {
+        "text": "Two people from Auckland to Sydney on 2026-10-30.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Auckland",
+        "destination": "Sydney",
+        "departure_date": null,
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["The supplied date is in the past; what departure date on or after 2026-11-02 should be used?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "Past dates become null relative to the supplied reference date."
+    },
+    {
+      "id": "c022",
+      "tier": "core",
+      "category": "invalid_calendar_date",
+      "input": {
+        "text": "Three travelers from Jakarta to Manila on 2027-02-30.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Jakarta",
+        "destination": "Manila",
+        "departure_date": null,
+        "passengers": 3,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["The supplied date is invalid; what departure date should be used?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "February 30 is not a calendar date."
+    },
+    {
+      "id": "c023",
+      "tier": "core",
+      "category": "ambiguous_numeric_date",
+      "input": {
+        "text": "Four passengers from Accra to Lagos on 03/04/2027.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Accra",
+        "destination": "Lagos",
+        "departure_date": null,
+        "passengers": 4,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Does 03/04/2027 mean March 4 or April 3?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "Both numeric components can be a month, so locale would change the meaning."
+    },
+    {
+      "id": "c024",
+      "tier": "core",
+      "category": "ambiguous_weekday",
+      "input": {
+        "text": "Next Friday, 2 people from San Jose to Portland.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "San Jose",
+        "destination": "Portland",
+        "departure_date": null,
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["What exact departure date do you mean by next Friday?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "The policy deliberately treats relative weekday phrases as ambiguous."
+    },
+    {
+      "id": "c025",
+      "tier": "core",
+      "category": "date_missing_year",
+      "input": {
+        "text": "One traveler from Brussels to Zurich on March 8.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Brussels",
+        "destination": "Zurich",
+        "departure_date": null,
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Which year should be used for March 8?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "A written month and day without a year is not inferred."
+    },
+    {
+      "id": "c026",
+      "tier": "core",
+      "category": "relative_month_boundary",
+      "input": {
+        "text": "In 3 days, fly two passengers from Sacramento to Las Vegas.",
+        "reference_date": "2026-04-29"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Sacramento",
+        "destination": "Las Vegas",
+        "departure_date": "2026-05-02",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 3,
+      "reason": "Relative date calculation crosses a month boundary."
+    },
+    {
+      "id": "c027",
+      "tier": "core",
+      "category": "relative_year_boundary",
+      "input": {
+        "text": "Tomorrow: Helsinki to Tallinn for 2 people.",
+        "reference_date": "2026-12-31"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Helsinki",
+        "destination": "Tallinn",
+        "departure_date": "2027-01-01",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 1,
+      "reason": "Relative date calculation crosses a year boundary."
+    },
+    {
+      "id": "c028",
+      "tier": "core",
+      "category": "relative_leap_day",
+      "input": {
+        "text": "In 2 days, one passenger from Geneva to Nice.",
+        "reference_date": "2028-02-27"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Geneva",
+        "destination": "Nice",
+        "departure_date": "2028-02-29",
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 2,
+      "reason": "Relative date calculation includes a valid leap day."
+    },
+    {
+      "id": "c029",
+      "tier": "extended",
+      "category": "punctuation_and_whitespace",
+      "input": {
+        "text": "  From Mexico City to São Paulo — 3 passengers; 2027-10-09!  ",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Mexico City",
+        "destination": "São Paulo",
+        "departure_date": "2027-10-09",
+        "passengers": 3,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "Surrounding and separating whitespace should not alter supplied location labels."
+    },
+    {
+      "id": "c030",
+      "tier": "extended",
+      "category": "invalid_fractional_passengers",
+      "input": {
+        "text": "1.5 passengers are going from Cape Town to Windhoek on July 19, 2027.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Cape Town",
+        "destination": "Windhoek",
+        "departure_date": "2027-07-19",
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Please provide a positive whole-number passenger count."]
+      },
+      "clarification_fields": ["passengers"],
+      "reason": "A fractional passenger count is invalid and requires clarification."
+    },
+    {
+      "id": "c031",
+      "tier": "extended",
+      "category": "passenger_total_from_breakdown",
+      "input": {
+        "text": "4 adults and 2 children from Orlando to San Juan on 2027-06-01.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Orlando",
+        "destination": "San Juan",
+        "departure_date": "2027-06-01",
+        "passengers": 6,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "Passenger types are summed into total headcount only."
+    },
+    {
+      "id": "c032",
+      "tier": "extended",
+      "category": "location_label_preservation",
+      "input": {
+        "text": "Book 1 seat from nyc to LA on 2027-09-30.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "nyc",
+        "destination": "LA",
+        "departure_date": "2027-09-30",
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "Location labels are preserved rather than resolved to airports or canonical names."
+    },
+    {
+      "id": "c033",
+      "tier": "extended",
+      "category": "gbp_symbol",
+      "input": {
+        "text": "Edinburgh to Amsterdam for two on 2027-03-03; £275.50 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Edinburgh",
+        "destination": "Amsterdam",
+        "departure_date": "2027-03-03",
+        "passengers": 2,
+        "budget_per_person": {"amount": 275.5, "currency": "GBP"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "The pound symbol maps to GBP and a decimal per-person amount stays numeric."
+    },
+    {
+      "id": "c034",
+      "tier": "extended",
+      "category": "eur_symbol",
+      "input": {
+        "text": "€1,050 per person for 3 travelers, from Copenhagen to Barcelona on 2027-05-17.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Copenhagen",
+        "destination": "Barcelona",
+        "departure_date": "2027-05-17",
+        "passengers": 3,
+        "budget_per_person": {"amount": 1050, "currency": "EUR"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "The euro symbol and thousands separator produce a numeric EUR amount."
+    },
+    {
+      "id": "c035",
+      "tier": "extended",
+      "category": "usd_symbol",
+      "input": {
+        "text": "US$725 each, 2 people, from Osaka to Singapore on 2027-08-21.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Osaka",
+        "destination": "Singapore",
+        "departure_date": "2027-08-21",
+        "passengers": 2,
+        "budget_per_person": {"amount": 725, "currency": "USD"},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "reason": "US$ explicitly identifies USD."
+    },
+    {
+      "id": "c036",
+      "tier": "extended",
+      "category": "relative_zero_days",
+      "input": {
+        "text": "In 0 days, one traveler from Muscat to Doha.",
+        "reference_date": "2027-01-09"
+      },
+      "expected": {
+        "status": "ready",
+        "origin": "Muscat",
+        "destination": "Doha",
+        "departure_date": "2027-01-09",
+        "passengers": 1,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": []
+      },
+      "clarification_fields": [],
+      "date_offset_days": 0,
+      "reason": "Zero is an allowed non-negative relative-day offset and means today."
+    },
+    {
+      "id": "c037",
+      "tier": "extended",
+      "category": "invalid_non_leap_day",
+      "input": {
+        "text": "Two passengers from Riga to Stockholm on February 29, 2027.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Riga",
+        "destination": "Stockholm",
+        "departure_date": null,
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["February 29 is not valid in 2027; what departure date should be used?"]
+      },
+      "clarification_fields": ["departure_date"],
+      "reason": "A written date with a year still must be a valid calendar date."
+    },
+    {
+      "id": "c038",
+      "tier": "extended",
+      "category": "multiple_ambiguous_and_missing",
+      "input": {
+        "text": "From Hanoi to Phnom Penh on 05/06/2027.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Hanoi",
+        "destination": "Phnom Penh",
+        "departure_date": null,
+        "passengers": null,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Does 05/06/2027 mean May 6 or June 5?", "How many passengers are traveling?"]
+      },
+      "clarification_fields": ["departure_date", "passengers"],
+      "reason": "Ambiguous date and absent passenger count both require clarification."
+    },
+    {
+      "id": "c039",
+      "tier": "extended",
+      "category": "budget_basis_and_currency_unknown",
+      "input": {
+        "text": "Two people from Budapest to Split on 2027-06-16. My budget is 200.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Budapest",
+        "destination": "Split",
+        "departure_date": "2027-06-16",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null},
+        "clarification_questions": ["Is the 200 budget per person?", "Which currency applies to the budget?"]
+      },
+      "clarification_fields": ["budget_basis", "budget_per_person.currency"],
+      "reason": "An unqualified budget with no currency leaves both per-person amount and currency unresolved."
+    },
+    {
+      "id": "c040",
+      "tier": "extended",
+      "category": "preserve_known_fields_multiple_clarifications",
+      "input": {
+        "text": "Departing from Kochi on 2027-12-05, 3 passengers, 450 each.",
+        "reference_date": "2026-11-02"
+      },
+      "expected": {
+        "status": "needs_clarification",
+        "origin": "Kochi",
+        "destination": null,
+        "departure_date": "2027-12-05",
+        "passengers": 3,
+        "budget_per_person": {"amount": 450, "currency": null},
+        "clarification_questions": ["Where would you like to travel to?", "Which currency applies to the 450 per-person budget?"]
+      },
+      "clarification_fields": ["destination", "budget_per_person.currency"],
+      "reason": "Known origin, date, count, amount, and basis survive two independent clarifications."
+    }
+  ]
+}
