@@ -1,0 +1,145 @@
+{
+  "format_version": 1,
+  "description": "Optional, synthetic integration scenarios for technical failures. These are not natural-language quality fixtures and do not prescribe an adapter API.",
+  "cases": [
+    {
+      "id": "f001",
+      "type": "invalid_input",
+      "input": {"text": "   ", "reference_date": "2026-11-02"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "text",
+        "provider_called": false,
+        "record_persisted": false
+      },
+      "reason": "Blank text is invalid interface input."
+    },
+    {
+      "id": "f002",
+      "type": "invalid_input",
+      "input": {"text": 42, "reference_date": "2026-11-02"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "text",
+        "provider_called": false,
+        "record_persisted": false
+      },
+      "reason": "Text must be a string; coercing a number hides a caller error."
+    },
+    {
+      "id": "f003",
+      "type": "invalid_input",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "02/11/2026"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "reference_date",
+        "provider_called": false,
+        "record_persisted": false
+      },
+      "reason": "Reference date must be a valid ISO calendar date."
+    },
+    {
+      "id": "f004",
+      "type": "provider_error",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_error": {"kind": "timeout", "message": "request timed out after 10s"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "timed out",
+        "record_persisted": false
+      },
+      "reason": "A provider timeout is not a request clarification."
+    },
+    {
+      "id": "f005",
+      "type": "provider_error",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_error": {"kind": "rate_limit", "status": 429, "message": "rate limit exceeded"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "rate limit",
+        "record_persisted": false
+      },
+      "reason": "A rate limit remains a technical error after any bounded retry."
+    },
+    {
+      "id": "f006",
+      "type": "invalid_model_output",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_response": "{not valid JSON",
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "model output",
+        "record_persisted": false
+      },
+      "reason": "Malformed model JSON cannot be converted to missing business fields."
+    },
+    {
+      "id": "f007",
+      "type": "invalid_model_output",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_response": [{"origin": "Paris", "destination": "Rome"}],
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "object",
+        "record_persisted": false
+      },
+      "reason": "The extraction schema expects an object, not an array."
+    },
+    {
+      "id": "f008",
+      "type": "invalid_model_output",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_response": {
+        "origin": "Paris",
+        "destination": "Rome",
+        "departure_date": "2026-11-03",
+        "passengers": "two",
+        "budget_per_person": {"amount": null, "currency": null}
+      },
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "passengers",
+        "record_persisted": false
+      },
+      "reason": "A wrong model-output type is structural failure, even if its meaning seems obvious."
+    },
+    {
+      "id": "f009",
+      "type": "invalid_model_output",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_response": {
+        "origin": "Paris",
+        "departure_date": "2026-11-03",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null}
+      },
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "destination",
+        "record_persisted": false
+      },
+      "reason": "A key required by the candidate's extraction schema must not silently become null."
+    },
+    {
+      "id": "f010",
+      "type": "persistence_error",
+      "input": {"text": "Two people from Paris to Rome tomorrow", "reference_date": "2026-11-02"},
+      "mock_provider_response": {
+        "origin": "Paris",
+        "destination": "Rome",
+        "departure_date": "2026-11-03",
+        "passengers": 2,
+        "budget_per_person": {"amount": null, "currency": null}
+      },
+      "mock_sqlite_error": {"operation": "insert", "message": "database or disk is full"},
+      "expected_behavior": {
+        "outcome": "technical_error",
+        "error_contains": "database or disk is full",
+        "success_response_returned": false,
+        "record_persisted": false
+      },
+      "reason": "A failed write must not be reported as a successful parse."
+    }
+  ]
+}

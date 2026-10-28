@@ -1,0 +1,70 @@
+{
+  "format_version": 1,
+  "description": "Optional, language-independent SQLite checks. Implement these in the style of the candidate's interface; no schema or test adapter is prescribed.",
+  "scenarios": [
+    {
+      "id": "p001",
+      "name": "retrieve_after_restart",
+      "steps": [
+        "Start the application with a temporary on-disk SQLite database.",
+        "Process one valid ready request and retain its generated request_id.",
+        "Stop the process and create a fresh application instance using the same database path.",
+        "Retrieve the record by request_id."
+      ],
+      "checks": [
+        "The record is found after restart.",
+        "Original text, reference_date, full result, status, request_id, and created_at match the saved record."
+      ]
+    },
+    {
+      "id": "p002",
+      "name": "unique_ids_without_overwrite",
+      "steps": [
+        "Process two successful requests, including identical input if desired.",
+        "Retrieve both records by their generated IDs."
+      ],
+      "checks": [
+        "The IDs are different and non-empty.",
+        "Both records exist and neither result overwrote the other."
+      ]
+    },
+    {
+      "id": "p003",
+      "name": "persist_both_business_statuses",
+      "steps": [
+        "Process one fully specified request whose status is ready.",
+        "Process one request missing a required business field whose status is needs_clarification.",
+        "Retrieve both records."
+      ],
+      "checks": [
+        "Both successful processing outcomes are persisted.",
+        "Each stored status agrees with the status inside its complete stored result.",
+        "The clarification result retains every known field."
+      ]
+    },
+    {
+      "id": "p004",
+      "name": "unknown_id",
+      "steps": [
+        "Query a syntactically valid request_id that is not in the database."
+      ],
+      "checks": [
+        "The interface returns an explicit not-found outcome.",
+        "No placeholder record is created."
+      ]
+    },
+    {
+      "id": "p005",
+      "name": "write_failure_is_not_success",
+      "steps": [
+        "Arrange for the SQLite insert or transaction commit to fail.",
+        "Process an otherwise valid request."
+      ],
+      "checks": [
+        "The caller receives a technical database error with useful original context.",
+        "The interface does not return a success result or usable request_id.",
+        "No partial success record can be retrieved."
+      ]
+    }
+  ]
+}
