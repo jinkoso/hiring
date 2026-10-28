@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "expiry-boundary",
+  "description": "Observations are evaluated just before, exactly at, and after their expiry boundaries.",
+  "steps": [
+    {"label":"before_first_expiry","as_of":"2027-01-15T10:04:59Z","event":{"event_id":"expiry_evt_001","quote_id":"offer_004_c_eur_standard_0","flight_id":"flight_004","supplier":"provider_c","total_price_minor":19500,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T10:05:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"exactly_at_second_expiry","as_of":"2027-01-15T10:10:00Z","event":{"event_id":"expiry_evt_002","quote_id":"offer_004_c_eur_standard_0","flight_id":"flight_004","supplier":"provider_c","total_price_minor":19300,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:05:00Z","expires_at":"2027-01-15T10:10:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"renewed_after_boundary","as_of":"2027-01-15T10:12:00Z","event":{"event_id":"expiry_evt_003","quote_id":"offer_004_c_eur_standard_0","flight_id":"flight_004","supplier":"provider_c","total_price_minor":19200,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:11:00Z","expires_at":"2027-01-15T10:20:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"after_final_expiry","as_of":"2027-01-15T10:26:00Z","event":{"event_id":"expiry_evt_004","quote_id":"offer_004_c_eur_standard_0","flight_id":"flight_004","supplier":"provider_c","total_price_minor":19000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:20:00Z","expires_at":"2027-01-15T10:25:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

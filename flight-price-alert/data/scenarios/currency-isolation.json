@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "currency-isolation",
+  "description": "The same flight receives independent EUR, USD, and GBP product observations without conversion.",
+  "steps": [
+    {"label":"eur_product_update","as_of":"2027-01-15T10:02:00Z","event":{"event_id":"currency_evt_001","quote_id":"offer_001_a_eur_standard_0","flight_id":"flight_001","supplier":"provider_a","total_price_minor":20900,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"usd_product_update","as_of":"2027-01-15T10:05:00Z","event":{"event_id":"currency_evt_002","quote_id":"offer_001_c_usd_standard_0","flight_id":"flight_001","supplier":"provider_c","total_price_minor":21700,"currency":"USD","available":true,"verified":true,"observed_at":"2027-01-15T10:04:00Z","expires_at":"2027-01-15T11:04:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"gbp_product_update","as_of":"2027-01-15T10:08:00Z","event":{"event_id":"currency_evt_003","quote_id":"offer_001_b_gbp_standard_0","flight_id":"flight_001","supplier":"provider_b","total_price_minor":18100,"currency":"GBP","available":true,"verified":true,"observed_at":"2027-01-15T10:07:00Z","expires_at":"2027-01-15T11:07:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"later_eur_product_update","as_of":"2027-01-15T10:11:00Z","event":{"event_id":"currency_evt_004","quote_id":"offer_001_a_eur_standard_0","flight_id":"flight_001","supplier":"provider_a","total_price_minor":20500,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:10:00Z","expires_at":"2027-01-15T11:10:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

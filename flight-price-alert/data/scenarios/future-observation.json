@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scenario_id": "future-observation",
+  "description": "Events can be replayed while their observation time is still later than the scenario evaluation time.",
+  "steps": [
+    {"label":"first_future_event","as_of":"2027-01-15T10:05:00Z","event":{"event_id":"future_evt_001","quote_id":"offer_005_a_eur_standard_0","flight_id":"flight_005","supplier":"provider_a","total_price_minor":17900,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:10:00Z","expires_at":"2027-01-15T11:10:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"another_future_event","as_of":"2027-01-15T10:08:00Z","event":{"event_id":"future_evt_002","quote_id":"offer_005_a_eur_standard_0","flight_id":"flight_005","supplier":"provider_a","total_price_minor":17700,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:12:00Z","expires_at":"2027-01-15T11:12:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"visible_later_event","as_of":"2027-01-15T10:14:00Z","event":{"event_id":"future_evt_003","quote_id":"offer_005_a_eur_standard_0","flight_id":"flight_005","supplier":"provider_a","total_price_minor":17600,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:13:00Z","expires_at":"2027-01-15T11:13:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

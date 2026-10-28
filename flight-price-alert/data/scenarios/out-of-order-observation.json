@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "out-of-order-observation",
+  "description": "A newer observation arrives before an older event, followed by a timestamp tie and a later update.",
+  "steps": [
+    {"label":"newer_event_arrives_first","as_of":"2027-01-15T10:21:00Z","event":{"event_id":"order_evt_020_a","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":21000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:20:00Z","expires_at":"2027-01-15T11:20:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"older_event_arrives_late","as_of":"2027-01-15T10:22:00Z","event":{"event_id":"order_evt_010","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":19600,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:10:00Z","expires_at":"2027-01-15T11:10:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"same_timestamp_tie","as_of":"2027-01-15T10:23:00Z","event":{"event_id":"order_evt_020_z","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":20800,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:20:00Z","expires_at":"2027-01-15T11:20:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"later_observation","as_of":"2027-01-15T10:31:00Z","event":{"event_id":"order_evt_030","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":20500,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:30:00Z","expires_at":"2027-01-15T11:30:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

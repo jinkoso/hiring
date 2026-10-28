@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "steady-and-upward",
+  "description": "A quote stays level and then rises in two observations.",
+  "steps": [
+    {"label":"baseline_refresh","as_of":"2027-01-15T10:02:00Z","event":{"event_id":"up_evt_001","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":22000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"steady_refresh","as_of":"2027-01-15T10:06:00Z","event":{"event_id":"up_evt_002","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":22000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:05:00Z","expires_at":"2027-01-15T11:05:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"first_increase","as_of":"2027-01-15T10:10:00Z","event":{"event_id":"up_evt_003","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":22500,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:09:00Z","expires_at":"2027-01-15T11:09:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"second_increase","as_of":"2027-01-15T10:14:00Z","event":{"event_id":"up_evt_004","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":23000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:13:00Z","expires_at":"2027-01-15T11:13:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}
