@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "other-route-and-date",
+  "description": "Updates span different routes and both catalog departure dates.",
+  "steps": [
+    {"label":"barcelona_first_date","as_of":"2027-01-15T10:02:00Z","event":{"event_id":"scope_evt_001","quote_id":"offer_005_a_eur_standard_0","flight_id":"flight_005","supplier":"provider_a","total_price_minor":18000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"lisbon_second_date","as_of":"2027-01-15T10:05:00Z","event":{"event_id":"scope_evt_002","quote_id":"offer_003_a_eur_standard_0","flight_id":"flight_003","supplier":"provider_a","total_price_minor":21800,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:04:00Z","expires_at":"2027-01-15T11:04:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"california_first_date","as_of":"2027-01-15T10:08:00Z","event":{"event_id":"scope_evt_003","quote_id":"offer_009_a_usd_standard_0","flight_id":"flight_009","supplier":"provider_a","total_price_minor":12400,"currency":"USD","available":true,"verified":true,"observed_at":"2027-01-15T10:07:00Z","expires_at":"2027-01-15T11:07:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"barcelona_second_date","as_of":"2027-01-15T10:11:00Z","event":{"event_id":"scope_evt_004","quote_id":"offer_007_c_eur_standard_0","flight_id":"flight_007","supplier":"provider_c","total_price_minor":20700,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:10:00Z","expires_at":"2027-01-15T11:10:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

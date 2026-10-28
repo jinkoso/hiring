@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scenario_id": "identical-event-replay",
+  "description": "The same event is delivered twice byte-for-byte before a later observation arrives.",
+  "steps": [
+    {"label":"first_delivery","as_of":"2027-01-15T10:02:00Z","event":{"event_id":"replay_evt_001","quote_id":"offer_001_a_eur_standard_0","flight_id":"flight_001","supplier":"provider_a","total_price_minor":20700,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"identical_redelivery","as_of":"2027-01-15T10:03:00Z","event":{"event_id":"replay_evt_001","quote_id":"offer_001_a_eur_standard_0","flight_id":"flight_001","supplier":"provider_a","total_price_minor":20700,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0},"expected_replay_status":200},
+    {"label":"later_distinct_event","as_of":"2027-01-15T10:07:00Z","event":{"event_id":"replay_evt_002","quote_id":"offer_001_a_eur_standard_0","flight_id":"flight_001","supplier":"provider_a","total_price_minor":20200,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:06:00Z","expires_at":"2027-01-15T11:06:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}

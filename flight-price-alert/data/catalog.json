@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "demo_as_of": "2027-01-15T10:00:00Z",
+  "airports": [
+    {"iata": "LHR", "name": "London Heathrow", "timezone": "Europe/London"},
+    {"iata": "LIS", "name": "Lisbon", "timezone": "Europe/Lisbon"},
+    {"iata": "BCN", "name": "Barcelona", "timezone": "Europe/Madrid"},
+    {"iata": "SFO", "name": "San Francisco", "timezone": "America/Los_Angeles"},
+    {"iata": "LAX", "name": "Los Angeles", "timezone": "America/Los_Angeles"}
+  ],
+  "flights": [
+    {"flight_id": "flight_001", "origin": "LHR", "destination": "LIS", "departure_at": "2027-02-12T07:20:00+00:00", "arrival_at": "2027-02-12T10:10:00+00:00", "carrier": "ZZ", "flight_number": "ZZ101", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_002", "origin": "LHR", "destination": "LIS", "departure_at": "2027-02-12T15:35:00+00:00", "arrival_at": "2027-02-12T18:25:00+00:00", "carrier": "ZZ", "flight_number": "ZZ105", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_003", "origin": "LHR", "destination": "LIS", "departure_at": "2027-02-13T08:10:00+00:00", "arrival_at": "2027-02-13T11:00:00+00:00", "carrier": "ZZ", "flight_number": "ZZ109", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_004", "origin": "LHR", "destination": "LIS", "departure_at": "2027-02-13T17:05:00+00:00", "arrival_at": "2027-02-13T19:55:00+00:00", "carrier": "ZZ", "flight_number": "ZZ113", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_005", "origin": "LHR", "destination": "BCN", "departure_at": "2027-02-12T06:50:00+00:00", "arrival_at": "2027-02-12T10:05:00+01:00", "carrier": "ZZ", "flight_number": "ZZ201", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_006", "origin": "LHR", "destination": "BCN", "departure_at": "2027-02-12T14:25:00+00:00", "arrival_at": "2027-02-12T17:40:00+01:00", "carrier": "ZZ", "flight_number": "ZZ205", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_007", "origin": "LHR", "destination": "BCN", "departure_at": "2027-02-13T07:40:00+00:00", "arrival_at": "2027-02-13T10:55:00+01:00", "carrier": "ZZ", "flight_number": "ZZ209", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_008", "origin": "LHR", "destination": "BCN", "departure_at": "2027-02-13T16:15:00+00:00", "arrival_at": "2027-02-13T19:30:00+01:00", "carrier": "ZZ", "flight_number": "ZZ213", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_009", "origin": "SFO", "destination": "LAX", "departure_at": "2027-02-12T07:15:00-08:00", "arrival_at": "2027-02-12T08:45:00-08:00", "carrier": "ZZ", "flight_number": "ZZ301", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_010", "origin": "SFO", "destination": "LAX", "departure_at": "2027-02-12T18:20:00-08:00", "arrival_at": "2027-02-12T19:50:00-08:00", "carrier": "ZZ", "flight_number": "ZZ305", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_011", "origin": "SFO", "destination": "LAX", "departure_at": "2027-02-13T09:05:00-08:00", "arrival_at": "2027-02-13T10:35:00-08:00", "carrier": "ZZ", "flight_number": "ZZ309", "cabin": "economy", "adults": 1},
+    {"flight_id": "flight_012", "origin": "SFO", "destination": "LAX", "departure_at": "2027-02-13T20:10:00-08:00", "arrival_at": "2027-02-13T21:40:00-08:00", "carrier": "ZZ", "flight_number": "ZZ313", "cabin": "economy", "adults": 1}
+  ]
+}

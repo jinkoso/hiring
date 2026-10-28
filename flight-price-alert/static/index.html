@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline Flight Search</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.45 system-ui, sans-serif; color: #17202a; background: #f4f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { padding: 2rem max(1.2rem, calc((100% - 980px) / 2)); color: white; background: #163b65; }
+    header h1 { margin: 0 0 .3rem; font-size: 2rem; }
+    header p { margin: 0; color: #dbe8f6; }
+    main { max-width: 980px; margin: 1.5rem auto; padding: 0 1.2rem 3rem; display: grid; gap: 1.2rem; }
+    section { background: white; border: 1px solid #dce5ef; border-radius: 12px; padding: 1.2rem; box-shadow: 0 4px 14px #173b6510; }
+    h2 { margin: 0 0 1rem; font-size: 1.2rem; }
+    form, .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+    label { display: grid; gap: .3rem; font-size: .88rem; font-weight: 650; color: #34495e; }
+    input, select, button { width: 100%; min-height: 42px; border: 1px solid #aebdcb; border-radius: 7px; padding: .55rem .65rem; font: inherit; background: white; }
+    button { align-self: end; cursor: pointer; border-color: #1769aa; background: #1769aa; color: white; font-weight: 700; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .wide { grid-column: 1 / -1; }
+    .notice { margin: .8rem 0 0; border-left: 4px solid #d88b19; padding: .65rem .8rem; background: #fff7e8; color: #704b14; }
+    #status { min-height: 1.5rem; margin: .8rem 0 0; color: #38546d; }
+    #results { display: grid; gap: .7rem; }
+    article { border: 1px solid #d9e3ed; border-radius: 8px; padding: .9rem; display: grid; gap: .2rem; }
+    article strong { font-size: 1.1rem; }
+    article span { color: #52687c; }
+    .price { color: #116149; font-size: 1.15rem; font-weight: 750; }
+    @media (max-width: 650px) { form, .controls { grid-template-columns: 1fr; } .wide { grid-column: auto; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Offline Flight Search</h1>
+    <p>Explore synthetic fares and replay deterministic quote updates.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Search</h2>
+      <form id="search-form">
+        <label>Origin <select id="origin" required></select></label>
+        <label>Destination <select id="destination" required></select></label>
+        <label>Departure date <input id="date" type="date" required></label>
+        <label>Currency
+          <select id="currency"><option>EUR</option><option>GBP</option><option>USD</option></select>
+        </label>
+        <label class="wide">Quotes visible as of <input id="as-of" required></label>
+        <button class="wide" type="submit">Search flights</button>
+      </form>
+      <p id="status" role="status"></p>
+    </section>
+
+    <section>
+      <h2>Quote scenario replay</h2>
+      <div class="controls">
+        <label>Scenario <select id="scenario"></select></label>
+        <label>Step <select id="scenario-step"></select></label>
+        <button class="wide" id="replay" type="button">Replay selected step</button>
+      </div>
+      <p id="selected-step"></p>
+      <p class="notice"><strong>Independent scenarios require a fresh database.</strong> Switching scenario does not reset stored quotes. Replay one scenario in order for a deterministic demonstration.</p>
+    </section>
+
+    <section>
+      <h2>Available fares</h2>
+      <div id="results"><p>Run a search to view fares.</p></div>
+    </section>
+  </main>
+  <script>
+    const byId = (id) => document.getElementById(id);
+    let scenarios = [];
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status})`);
+      return payload;
+    }
+
+    function queryFromForm() {
+      return new URLSearchParams({
+        origin: byId('origin').value,
+        destination: byId('destination').value,
+        date: byId('date').value,
+        currency: byId('currency').value,
+        as_of: byId('as-of').value
+      });
+    }
+
+    async function search() {
+      byId('status').textContent = 'Searching…';
+      try {
+        const payload = await request(`/api/search?${queryFromForm()}`);
+        byId('status').textContent = `${payload.results.length} fare${payload.results.length === 1 ? '' : 's'} found.`;
+        byId('results').replaceChildren(...(payload.results.length ? payload.results.map(renderFare) : [document.createTextNode('No eligible fares found.') ]));
+      } catch (error) {
+        byId('status').textContent = error.message;
+      }
+    }
+
+    function renderFare(fare) {
+      const card = document.createElement('article');
+      const amount = new Intl.NumberFormat('en', { style: 'currency', currency: fare.currency }).format(fare.total_price_minor / 100);
+      const addLine = (tag, text, className) => {
+        const line = document.createElement(tag);
+        line.textContent = text;
+        if (className) line.className = className;
+        card.append(line);
+      };
+      addLine('strong', `${fare.origin} → ${fare.destination} · ${fare.flight_number}`);
+      addLine('span', `${fare.departure_at} · ${fare.carrier}`);
+      addLine('span', `${amount} gross total`, 'price');
+      addLine('span', `${fare.supplier} · ${fare.fare_family} · ${fare.checked_bag_kg} kg checked bag`);
+      addLine('span', `Observed ${fare.observed_at}; expires ${fare.expires_at}`);
+      return card;
+    }
+
+    function selectedScenario() {
+      return scenarios.find((item) => item.scenario_id === byId('scenario').value);
+    }
+
+    function populateSteps() {
+      const scenario = selectedScenario();
+      const stepSelect = byId('scenario-step');
+      stepSelect.replaceChildren();
+      for (const step of scenario?.steps || []) {
+        const option = document.createElement('option');
+        option.value = step.step;
+        option.textContent = `${step.step + 1}. ${step.label}`;
+        stepSelect.append(option);
+      }
+      showSelectedStep();
+    }
+
+    function showSelectedStep() {
+      const scenario = selectedScenario();
+      const step = scenario?.steps[Number(byId('scenario-step').value)];
+      byId('replay').disabled = !step;
+      byId('selected-step').textContent = step ? `Selected: ${step.label} (as of ${step.as_of})` : 'This scenario has no replay steps.';
+    }
+
+    async function replaySelected() {
+      const scenario = selectedScenario();
+      const stepIndex = Number(byId('scenario-step').value);
+      const step = scenario?.steps[stepIndex];
+      if (!step) return;
+      byId('replay').disabled = true;
+      try {
+        const replayed = await request('/api/replay', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenario_id: scenario.scenario_id, step: stepIndex })
+        });
+        byId('as-of').value = replayed.as_of;
+        if (scenario.steps[stepIndex + 1]) byId('scenario-step').value = String(stepIndex + 1);
+        showSelectedStep();
+        await search();
+      } catch (error) {
+        byId('status').textContent = error.message;
+        showSelectedStep();
+      }
+    }
+
+    async function initialize() {
+      try {
+        const [catalog, scenarioPayload] = await Promise.all([request('/api/flights'), request('/api/scenarios')]);
+        for (const select of [byId('origin'), byId('destination')]) {
+          for (const airport of catalog.airports) {
+            const option = document.createElement('option');
+            option.value = airport.iata;
+            option.textContent = `${airport.iata} — ${airport.name}`;
+            select.append(option);
+          }
+        }
+        const first = catalog.flights[0];
+        byId('origin').value = first.origin;
+        byId('destination').value = first.destination;
+        byId('date').value = first.departure_at.slice(0, 10);
+        byId('as-of').value = catalog.demo_as_of;
+        scenarios = scenarioPayload.scenarios;
+        for (const scenario of scenarios) {
+          const option = document.createElement('option');
+          option.value = scenario.scenario_id;
+          option.textContent = scenario.scenario_id;
+          byId('scenario').append(option);
+        }
+        if (scenarios.some((scenario) => scenario.scenario_id === 'threshold-crossing')) {
+          byId('scenario').value = 'threshold-crossing';
+        }
+        populateSteps();
+        await search();
+      } catch (error) {
+        byId('status').textContent = error.message;
+      }
+    }
+
+    byId('search-form').addEventListener('submit', (event) => { event.preventDefault(); search(); });
+    byId('scenario').addEventListener('change', populateSteps);
+    byId('scenario-step').addEventListener('change', showSelectedStep);
+    byId('replay').addEventListener('click', replaySelected);
+    initialize();
+  </script>
+</body>
+</html>

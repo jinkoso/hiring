@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "unverified-quotes",
+  "description": "The latest observation alternates between unverified and verified states.",
+  "steps": [
+    {"label":"unverified_decrease","as_of":"2027-01-15T10:02:00Z","event":{"event_id":"verify_evt_001","quote_id":"offer_006_b_eur_standard_0","flight_id":"flight_006","supplier":"provider_b","total_price_minor":18100,"currency":"EUR","available":true,"verified":false,"observed_at":"2027-01-15T10:01:00Z","expires_at":"2027-01-15T11:01:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"verified_refresh","as_of":"2027-01-15T10:06:00Z","event":{"event_id":"verify_evt_002","quote_id":"offer_006_b_eur_standard_0","flight_id":"flight_006","supplier":"provider_b","total_price_minor":18300,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:05:00Z","expires_at":"2027-01-15T11:05:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"newer_unverified_refresh","as_of":"2027-01-15T10:10:00Z","event":{"event_id":"verify_evt_003","quote_id":"offer_006_b_eur_standard_0","flight_id":"flight_006","supplier":"provider_b","total_price_minor":17800,"currency":"EUR","available":true,"verified":false,"observed_at":"2027-01-15T10:09:00Z","expires_at":"2027-01-15T11:09:00Z","fare_family":"standard","checked_bag_kg":0}},
+    {"label":"verified_recovery","as_of":"2027-01-15T10:14:00Z","event":{"event_id":"verify_evt_004","quote_id":"offer_006_b_eur_standard_0","flight_id":"flight_006","supplier":"provider_b","total_price_minor":18000,"currency":"EUR","available":true,"verified":true,"observed_at":"2027-01-15T10:13:00Z","expires_at":"2027-01-15T11:13:00Z","fare_family":"standard","checked_bag_kg":0}}
+  ]
+}
